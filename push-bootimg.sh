@@ -7,7 +7,7 @@ echo "Pushing kexec_boot.img to device (/tmp or /data/tmp/tmp)"
 PUSH_PATH="/tmp/kexec_boot.img"
 
 if [ -z "${INREC}" ]; then
-    ## Device is not in recovery (assumed in android), so create required stuff for push
+    ## Device is not in recovery (assumed in android)
     echo "WARN: Device is not in recovery mode, this will pollute /sdcard"
     PUSH_PATH="/sdcard/kexec_boot.img"
 fi
