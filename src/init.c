@@ -24,6 +24,7 @@ void print_kmsgs(const char *msg, const char *s);
 void mount_proc();
 void mount_sys();
 void mount_dev();
+void mount_tmp();
 int file_exists(const char *path);
 void run_init();
 
@@ -134,6 +135,16 @@ void mount_dev() {
    }
 
    //Not mounting /dev/pts yet (not sure if needed)
+}
+
+void mount_tmp() {
+   print_kmsg("Mounting /tmp...");
+
+   if (system_mount ("tmpfs", "/tmp",
+				  MS_NODEV | MS_NOEXEC | MS_NOSUID, NULL) < 0) {
+      print_kmsg("Failed to mount /tmp!\n");
+      exit(1);
+   }
 }
 
 /**
