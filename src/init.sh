@@ -21,11 +21,11 @@ echo "KEXEC_TOOLS Mounting $PRODUCT on /tmp/product" > /dev/kmsg
 $mount $PRODUCT /tmp/product > /dev/kmsg
 
 echo "KEXEC_TOOLS Executing kexec" > /dev/kmsg
-$kexec -l /tmp/product/kernel --reuse-cmdline --initrd=/tmp/product/ramdisk > /dev/kmsg
+$kexec --debug -l /tmp/product/kernel --kexec-syscall-auto --force --no-checks --reuse-cmdline --initrd=/tmp/product/ramdisk > /dev/kmsg
 
 echo "KEXEC_TOOLS kexec exited with: $?" > /dev/kmsg
 
 if [ $? -eq 0 ]; then
     echo "KEXEC_TOOLS kexec status:" > /dev/kmsg
-    $kexec --status > /dev/kmsg
+    $kexec --debug --status > /dev/kmsg
 fi
