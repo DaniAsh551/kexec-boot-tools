@@ -13,7 +13,7 @@ rm -rf out/* || true
 
 ## Execute all build scripts
 ./copy-initrd.sh || exit 1
-./build-init.sh || exit 1
+#./build-init.sh || exit 1
 ./build-ramdisk.sh || exit 1
 ./build-bootimg.sh || exit 1
 ./push-bootimg.sh || exit 1

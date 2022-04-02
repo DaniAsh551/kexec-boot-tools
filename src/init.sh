@@ -1,31 +1,51 @@
-#!/bin/bash
+#!/bin/busybox ash
 
-PRODUCT=/dev/sda27
 
 BB=/bin/busybox
-mount="$BB mount"
-mkdir="$BB mkdir"
-cat="$BB cat"
-kexec="/bin/kexec"
+DATA="/data"
 
-CMDLINE=$($cat /proc/cmdline)
+export PATH="/bin"
 
-echo "KEXEC_TOOLS SH_TEST_SUCCESS" > /dev/kmsg
-echo "KEXEC_TOOLS CMDLINE:" > /dev/kmsg
-echo $CMDLINE > /dev/kmsg
+function printk() {
+    if [ -f /dev/kmsg ]; then
+        echo "[KBT] $@" > /dev/kmsg
+    else
+        echo "[KBT] $@"
+    fi
+}
 
-echo "KEXEC_TOOLS Creating /tmp/product" > /dev/kmsg
-$mkdir -p /tmp/product || true
+# if [ -d $DATA ]; then
+#     echo "$DATA exists" > /dev/kmsg
+# else
+#     echo "$DATA DOES NOT exist" > /dev/kmsg
+# fi
 
-echo "KEXEC_TOOLS Mounting $PRODUCT on /tmp/product" > /dev/kmsg
-$mount $PRODUCT /tmp/product > /dev/kmsg
+# if [ -f $DATA/rootfs.img ]; then
+#     echo "$DATA/rootfs.img exists" > /dev/kmsg
+# else
+#     echo "$DATA/rootfs.img DOES NOT exist" > /dev/kmsg
+# fi
 
-echo "KEXEC_TOOLS Executing kexec" > /dev/kmsg
-$kexec --debug -l /tmp/product/kernel --kexec-syscall-auto --force --no-checks --reuse-cmdline --initrd=/tmp/product/ramdisk > /dev/kmsg
+# echo "KEXEC_TOOLS Mounting $DATA/rootfs.img on /root" > /dev/kmsg
+# mount $DATA/rootfs.img /root 2>&1> /dev/kmsg
 
-echo "KEXEC_TOOLS kexec exited with: $?" > /dev/kmsg
+# echo "KEXEC_TOOLS Listing /system" > /dev/kmsg
+# for e in /system/*; do
+#     echo "KEXEC_TOOLS $e" > /dev/kmsg
+# done
 
-if [ $? -eq 0 ]; then
-    echo "KEXEC_TOOLS kexec status:" > /dev/kmsg
-    $kexec --debug --status > /dev/kmsg
-fi
+# printk "Mounting /system"
+# printk "$(mount -t ext4 -o rw,seclabel,relatime,block_validity,delalloc,barrier,user_xattr,acl /dev/sda25 /system)"
+
+# printk "Moving to /root" 
+# printk "$(mount --move /sys /system)"
+# printk "$(mount --move /dev /system)"
+# printk "$(mount --move /proc /system)"
+
+# echo "KEXEC_TOOLS Handing over to /sbin/init" > /dev/kmsg
+# pivot_root /system /sbin/init
+
+printk "[KBT] Hello from KEXEC_BOOT_TOOLS sh"
+printk "[KBT] EXECUTE /init_real"
+
+/init_real>/dev/kmsg

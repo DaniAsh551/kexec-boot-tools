@@ -1,5 +1,7 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+NC='\033[0m'
 INREC="$(adb devices | grep recovery)"
 
 echo "Pushing kexec_boot.img to device (/tmp or /data/tmp/tmp)"
@@ -8,7 +10,7 @@ PUSH_PATH="/tmp/kexec_boot.img"
 
 if [ -z "${INREC}" ]; then
     ## Device is not in recovery (assumed in android)
-    echo "WARN: Device is not in recovery mode, this will pollute /sdcard"
+    printf "${RED}WARN: Device is not in recovery mode, this will pollute /sdcard${NC}\n"
     PUSH_PATH="/sdcard/kexec_boot.img"
 fi
 

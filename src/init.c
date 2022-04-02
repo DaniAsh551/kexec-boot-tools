@@ -25,6 +25,8 @@ void mount_proc();
 void mount_sys();
 void mount_dev();
 void mount_tmp();
+void mount_data();
+void mount_system();
 int file_exists(const char *path);
 void run_init();
 
@@ -102,26 +104,46 @@ int system_mount (const char *type,
 }
 
 void mount_proc() {
-   print_kmsg("Mounting /proc...");
+   print_kmsg("[KBT] Mounting /proc...");
    if (system_mount ("proc", "/proc",
 				  MS_NODEV | MS_NOEXEC | MS_NOSUID, NULL) < 0) {
-      print_kmsg("Failed to mount /proc!\n");
+      print_kmsg("[KBT] Failed to mount /proc!\n");
       exit(1);
    }
 }
  
 void mount_sys() {
-   print_kmsg("Mounting /sys...");
+   print_kmsg("[KBT] Mounting /sys...");
 
    if (system_mount ("sysfs", "/sys",
 				  MS_NODEV | MS_NOEXEC | MS_NOSUID, NULL) < 0) {
-      print_kmsg("Failed to mount /sys!\n");
+      print_kmsg("[KBT] Failed to mount /sys!\n");
+      exit(1);
+   }
+}
+
+void mount_data() {
+   print_kmsg("[KBT] Mounting /data...");
+
+   if (mount ("/dev/sda31", "/data", "ext4",
+				  MS_NODIRATIME | MS_NOATIME, NULL) < 0) {
+      print_kmsg("[KBT] Failed to mount /data!\n");
+      exit(1);
+   }
+}
+
+void mount_system() {
+   print_kmsg("[KBT] Mounting /system...");
+
+   if (mount ("/dev/sda25", "/system", "ext4",
+				  MS_NODIRATIME | MS_NOATIME, NULL) < 0) {
+      print_kmsg("[KBT] Failed to mount /system!\n");
       exit(1);
    }
 }
  
 void mount_dev() {
-   printf("Mounting /dev...");
+   printf("[KBT] Mounting /dev...");
 
    if (system_mount ("devtmpfs", "/dev",
 					  MS_NOEXEC | MS_NOSUID, NULL) < 0) {
@@ -129,7 +151,7 @@ void mount_dev() {
       // Error code 16 ("device or resource busy") is spurrious and doesn't really matter. Ignore it.
       if (errno2 != 16) {
         //printing the error code, but we won't see any errors sadly :(
-         printf("Failed to mount /dev! errno=%d strerror=%s\n", errno, strerror(errno));
+         printf("[KBT] Failed to mount /dev! errno=%d strerror=%s\n", errno, strerror(errno));
          exit(1);
       }
    }
@@ -138,11 +160,11 @@ void mount_dev() {
 }
 
 void mount_tmp() {
-   print_kmsg("Mounting /tmp...");
+   print_kmsg("[KBT] Mounting /tmp...");
 
    if (system_mount ("tmpfs", "/tmp",
 				  MS_NODEV | MS_NOEXEC | MS_NOSUID, NULL) < 0) {
-      print_kmsg("Failed to mount /tmp!\n");
+      print_kmsg("[KBT] Failed to mount /tmp!\n");
       exit(1);
    }
 }
@@ -152,7 +174,8 @@ void mount_tmp() {
  */
 void run_init() {
    char *const argv[] = {
-      "/bin/bash",
+      "/bin/busybox",
+      "ash",
       "/init.sh",
       NULL
    };
@@ -160,17 +183,19 @@ void run_init() {
    int status = execvp(argv[0], argv);
 
    if(status == 0){
-      print_kmsg("KEXEC_TOOLS BASH CALL EXITED WITH: 0");
+      print_kmsg("[KBT] BASH CALL EXITED WITH: 0");
    }else{
-      print_kmsgi("KEXEC_TOOLS BASH CALL EXITED WITH:", status);
+      print_kmsgi("[KBT] BASH CALL EXITED WITH:", status);
    }
 }
 
 int main() {
    mount_dev();
-   print_kmsg("KEXEC_TOOLS_START\n");
-   mount_sys();
-   mount_proc();
+   print_kmsg("KEXEC_BOOT_TOOLS_START\n");
+   // mount_sys();
+   // mount_proc();
+   // mount_data();
+   // mount_system();
    run_init();
    return 0;
 }
