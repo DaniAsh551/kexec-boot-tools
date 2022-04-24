@@ -10,11 +10,11 @@
 ├── out                        -   Build directory (.gitignored)
 ├── README.md                  -   This README file
 ├── steps                      -   Source for everything needed for init (initrd,init,init.sh)
-    ├── 00-copy-initrd.sh      -   Copy src/initrd to out/initrd
-    ├── 10-build-init.sh       -   Builds init binary and copies it to out/initrd
-    ├── 20-build-ramdisk.sh    -   Builds ramdisk from out/initrd (NEEDS ROOT ACCESS but DO NOT run as root - it will ask for auth with sudo) 
-    ├── 30-build-bootimg.sh    -   Packs ramdisk and kernel to bootimg in out (Contains offset definitions)
-    └── 90-push-bootimg.sh     -   Push the built (PROMPT)bootimg and flash and (PROMPT)reboot.
+├────── 00-copy-initrd.sh      -   Copy src/initrd to out/initrd
+├────── 10-build-init.sh       -   Builds init binary and copies it to out/initrd
+├────── 20-build-ramdisk.sh    -   Builds ramdisk from out/initrd (NEEDS ROOT ACCESS but DO NOT run as root - it will ask for auth with sudo) 
+├────── 30-build-bootimg.sh    -   Packs ramdisk and kernel to bootimg in out (Contains offset definitions)
+├────── 90-push-bootimg.sh     -   Push the built (PROMPT)bootimg and flash and (PROMPT)reboot.
 └── src                        -   Source for everything needed for init (initrd,init,init.sh)
     ├── init.c                 -   Source for custom init binary
     ├── initrd                 -   Base initrd (put anything you need in ramdisk here)
